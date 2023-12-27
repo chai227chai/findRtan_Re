@@ -37,7 +37,6 @@ public class gameManager : MonoBehaviour
     public bool nocards;
 
     float time = 60.0f;
-    
     float soundTime = 0f;
 
     public int count = 0;
@@ -120,15 +119,6 @@ public class gameManager : MonoBehaviour
                 cntDown.SetActive(true);
                 countDown.text = timer.ToString("N0");
                 if(timer <= 0){
-                    // count += 1;
-                    // state = 2;
-                    // areOpen = true;
-
-                    // firstCard.GetComponent<card>().closeCard();
-
-                    // firstCard = null;
-                    // cntDown.SetActive(false);
-                    // countdown = 0;
                     isMatched();
                 }
             }
