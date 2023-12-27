@@ -16,6 +16,7 @@ public class gameManager : MonoBehaviour
     public GameObject startCount;
     public GameObject alert;
     public GameObject endPanel;
+    public GameObject timeTrack;
 
     public AudioClip match;
     public AudioClip drum;
@@ -177,6 +178,7 @@ public class gameManager : MonoBehaviour
             else{
                 state = 2;
                 time -= 3f;
+                timeTrack.GetComponent<timeTrack>().onShake();
 
                 firstCard.GetComponent<card>().closeCard();
                 secondCard.GetComponent<card>().closeCard();
@@ -186,6 +188,7 @@ public class gameManager : MonoBehaviour
             areOpen = true;
             state = 2;
             time -= 3f;
+            timeTrack.GetComponent<timeTrack>().onShake();
 
             firstCard.GetComponent<card>().closeCard();
         }
@@ -207,6 +210,8 @@ public class gameManager : MonoBehaviour
         matchCount.text = count.ToString();
 
         music.GetComponent<audioManager>().stopMusic();
+
+        timeTrack.GetComponent<timeTrack>().onShake();
     }
 
     public void retryGame()
