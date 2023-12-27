@@ -33,6 +33,7 @@ public class gameManager : MonoBehaviour
     public bool areOpen;
     public bool isstart;
     public bool isEmer;
+    public bool nocards;
 
     float time = 60.0f;
     
@@ -44,6 +45,8 @@ public class gameManager : MonoBehaviour
     int countdown = 0;
     int timer = 3;
     int startTime = 0;
+
+    Dictionary<GameObject, int> deck = new Dictionary<GameObject, int>();
 
     public static gameManager I;
 
@@ -60,31 +63,21 @@ public class gameManager : MonoBehaviour
         areOpen = false;
         isstart = false;
         isEmer = false;
+        nocards = false;
 
         endPanel.SetActive(false);
 
-        int[] rtans = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
-        rtans = rtans.OrderBy(item => Random.Range(-1.0f, 1.0f)).ToArray();
-
-        for(int i = 0; i < 16; i++){
-
-            GameObject newCard = Instantiate(card);
-            //newCards를 cards로 옮겨라
-            newCard.transform.parent = GameObject.Find("Cards").transform;
-
-            float x = (i / 4) * 1.4f - 2.1f;
-            float y = (i % 4) * 1.4f - 3.0f;
-            newCard.transform.position = new Vector3(x, y, 0);
-
-            string rtanName = "rtan" + rtans[i].ToString();
-            newCard.transform.Find("front").GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(rtanName);
-        }
+        newCards();
     }
 
     // Update is called once per frame
     void Update()
     {
         if(isstart == false){
+            if(!nocards){
+                StartCoroutine("dealCards");
+            }
+            
             soundTime -= Time.deltaTime;
             if(soundTime <= 0){
                 startTime++;
@@ -204,6 +197,7 @@ public class gameManager : MonoBehaviour
     }
 
     void GameEnd(){
+        nocards = true;
         isstart = false;
         isEmer = false;
         Time.timeScale = 0.0f;
@@ -220,4 +214,33 @@ public class gameManager : MonoBehaviour
         SceneManager.LoadScene("MainScene");
     }
 
+    void newCards(){
+        int[] rtans = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
+        rtans = rtans.OrderBy(item => Random.Range(-1.0f, 1.0f)).ToArray();
+
+        for(int i = 0; i < 16; i++){
+
+            GameObject newCard = Instantiate(card);
+            //newCards를 cards로 옮겨라
+            newCard.transform.parent = GameObject.Find("Cards").transform;
+
+            // float x = (i / 4) * 1.4f - 2.1f;
+            // float y = (i % 4) * 1.4f - 3.0f;
+            newCard.transform.position = new Vector3(0, 4f, 0);
+
+            string rtanName = "rtan" + rtans[i].ToString();
+            newCard.transform.Find("front").GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(rtanName);
+            deck.Add(newCard, i);
+        }
+    }
+
+    IEnumerator dealCards(){
+        foreach(KeyValuePair<GameObject, int> item in deck){
+            float x = (item.Value / 4) * 1.4f - 2.1f;
+            float y = (item.Value % 4) * 1.4f - 3.0f;
+            Vector3 target = new Vector3(x, y, 0);
+            item.Key.transform.position = Vector3.Lerp(item.Key.transform.position, target, 0.03f);
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
 }
