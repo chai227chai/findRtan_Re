@@ -10,11 +10,12 @@ public class gameManager : MonoBehaviour
     public GameObject card;
     public GameObject firstCard;
     public GameObject secondCard;
-    public GameObject endText;
+    // public GameObject endText;
     public GameObject music;
     public GameObject cntDown;
     public GameObject startCount;
     public GameObject alert;
+    public GameObject endPanel;
 
     public AudioClip match;
     public AudioClip drum;
@@ -25,6 +26,9 @@ public class gameManager : MonoBehaviour
     public Text countText;
     public Text countDown;
     public Text startTXT;
+    public Text result;
+    public Text endTime;
+    public Text matchCount;
 
     public bool areOpen;
     public bool isstart;
@@ -56,6 +60,8 @@ public class gameManager : MonoBehaviour
         areOpen = false;
         isstart = false;
         isEmer = false;
+
+        endPanel.SetActive(false);
 
         int[] rtans = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
         rtans = rtans.OrderBy(item => Random.Range(-1.0f, 1.0f)).ToArray();
@@ -133,7 +139,15 @@ public class gameManager : MonoBehaviour
                 }
             }
 
-            if(time <= 0.0f || cardsLeft == 0){
+            if(cardsLeft == 0){
+                result.text = "성공!";
+                result.color = new Color32(50, 255, 255, 255);
+                areOpen = true;
+                GameEnd();
+            }
+            else if(time <= 0.0f){
+                result.text = "실패!";
+                result.color = new Color32(255, 50, 0, 255);
                 time = 0f;
                 areOpen = true;
                 GameEnd();
@@ -193,7 +207,11 @@ public class gameManager : MonoBehaviour
         isstart = false;
         isEmer = false;
         Time.timeScale = 0.0f;
-        endText.SetActive(true);
+
+        endPanel.SetActive(true);
+        endTime.text = time.ToString("N2");
+        matchCount.text = count.ToString();
+
         music.GetComponent<audioManager>().stopMusic();
     }
 
