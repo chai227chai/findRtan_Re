@@ -13,7 +13,6 @@ public class card : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -22,12 +21,16 @@ public class card : MonoBehaviour
     }
 
     public void openCard(){
+        GameObject front = transform.Find("front").gameObject;
+        GameObject back = transform.Find("back").gameObject;
+
         if(!gameManager.I.areOpen && gameManager.I.isstart){
             audioSource.PlayOneShot(flip);
             anim.SetBool("isOpen", true);
 
-            transform.Find("front").gameObject.SetActive(true);
-            transform.Find("back").gameObject.SetActive(false);
+            back.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 100);
+            front.gameObject.SetActive(true);
+            back.SetActive(false);
 
             if(gameManager.I.firstCard == null){
                 gameManager.I.firstCard = gameObject;
