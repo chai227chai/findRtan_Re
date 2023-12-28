@@ -10,13 +10,14 @@ public class gameManager : MonoBehaviour
     public GameObject card;
     public GameObject firstCard;
     public GameObject secondCard;
-    // public GameObject endText;
     public GameObject music;
     public GameObject cntDown;
     public GameObject startCount;
     public GameObject alert;
     public GameObject endPanel;
     public GameObject timeTrack;
+    public GameObject bar;
+    public GameObject damage;
 
     public AudioClip match;
     public AudioClip drum;
@@ -38,6 +39,7 @@ public class gameManager : MonoBehaviour
 
     float time = 60.0f;
     float soundTime = 0f;
+    float scale = 1f;
 
     public int count = 0;
     public int state = 0;
@@ -110,6 +112,7 @@ public class gameManager : MonoBehaviour
             int cardsLeft = GameObject.Find("Cards").transform.childCount;
 
             if(firstCard != null){
+                StartCoroutine("barCount");
                 soundTime -= Time.deltaTime;
                 if(soundTime <= 0){
                     countdown++;
@@ -168,6 +171,7 @@ public class gameManager : MonoBehaviour
             else{
                 state = 2;
                 time -= 3f;
+                Instantiate(damage);
                 timeTrack.GetComponent<timeTrack>().onShake();
 
                 firstCard.GetComponent<card>().closeCard();
@@ -178,15 +182,18 @@ public class gameManager : MonoBehaviour
             areOpen = true;
             state = 2;
             time -= 3f;
+            Instantiate(damage);
             timeTrack.GetComponent<timeTrack>().onShake();
 
             firstCard.GetComponent<card>().closeCard();
         }
 
+        soundTime = 1f;
         firstCard = null;
         secondCard = null;
         cntDown.SetActive(false);
         countdown = 0;
+        barReset();
     }
 
     void GameEnd(){
@@ -237,5 +244,17 @@ public class gameManager : MonoBehaviour
             item.Key.transform.position = Vector3.Lerp(item.Key.transform.position, target, 0.03f);
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    IEnumerator barCount(){
+        scale -= Time.deltaTime / 5 ;
+        bar.transform.localScale = new Vector3(scale, 1f, 1f);
+        bar.transform.GetComponent<Image>().color = Color.Lerp(Color.red, Color.white, scale);
+        yield return null;
+    }
+
+    void barReset(){
+        bar.transform.localScale = new Vector3(1f, 1f, 1f);
+        scale = 1f;
     }
 }
